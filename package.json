@@ -1,0 +1,25 @@
+{
+  "name": "sdkgen-client",
+  "version": "0.1.0",
+  "description": "SDKgen client",
+  "keywords": [
+    "sdkgen",
+    "sdk",
+    "generator",
+    "client"
+  ],
+  "author": "Christoph Kappestein",
+  "license": "MIT",
+  "homepage": "https://sdkgen.app",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "axios": "^0.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
+}
