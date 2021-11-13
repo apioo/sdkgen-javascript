@@ -3,12 +3,13 @@ import {TokenStoreInterface} from "./TokenStoreInterface";
 import {AuthorizationCode} from "./Credentials/AuthorizationCode";
 import {InvalidCredentialsException} from "./Exception/InvalidCredentialsException";
 import {HttpBasic} from "./Credentials/HttpBasic";
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 import {OAuth2Abstract} from "./Credentials/OAuth2Abstract";
 import {ApiKey} from "./Credentials/ApiKey";
 import {HttpBearer} from "./Credentials/HttpBearer";
 import {AccessToken} from "./AccessToken";
 import {FoundNoAccessTokenException} from "./Exception/FoundNoAccessTokenException";
+import {ClientCredentials} from "./Credentials/ClientCredentials";
 
 export abstract class ClientAbstract {
 
@@ -48,14 +49,14 @@ export abstract class ClientAbstract {
         return url.toString();
     }
 
-    public fetchAccessTokenByCode(code: string): Promise<AccessToken> {
+    public async fetchAccessTokenByCode(code: string): Promise<AccessToken> {
         if (!(this.credentials instanceof AuthorizationCode)) {
             throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 authorization code flow');
         }
 
         const credentials = this.credentials;
-        const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
-        const tokenStore = this.tokenStore;
+        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const me = this;
 
         return new Promise(function(resolve, reject) {
             httpClient.post<AccessToken>(credentials.tokenUrl, {
@@ -68,25 +69,47 @@ export abstract class ClientAbstract {
                     code: code,
                 }
             }).then((response) => {
-                if (tokenStore) {
-                    tokenStore.persist(response.data);
-                }
-
-                resolve(response.data);
+                me.parseResponse(response.data, resolve);
             }).catch(() => {
                 reject()
             });
         });
     }
 
-    public fetchAccessTokenByRefresh(refreshToken: string): Promise<AccessToken> {
+    public async fetchAccessTokenByClientCredentials(): Promise<AccessToken> {
+        if (!(this.credentials instanceof ClientCredentials)) {
+            throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 client credentials flow');
+        }
+
+        const credentials = this.credentials;
+        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const me = this;
+
+        return new Promise(function(resolve, reject) {
+            httpClient.post<AccessToken>(credentials.tokenUrl, {
+                headers: {
+                    'User-Agent': ClientAbstract.USER_AGENT,
+                    'Accept': 'application/json'
+                },
+                data: {
+                    grant_type: 'client_credentials'
+                }
+            }).then((response) => {
+                me.parseResponse(response.data, resolve);
+            }).catch(() => {
+                reject()
+            });
+        });
+    }
+
+    public async fetchAccessTokenByRefresh(refreshToken: string): Promise<AccessToken> {
         if (!(this.credentials instanceof AuthorizationCode)) {
             throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 flow');
         }
 
         const credentials = this.credentials;
-        const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
-        const tokenStore = this.tokenStore;
+        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const me = this;
 
         return new Promise(function(resolve, reject) {
             httpClient.post<AccessToken>(credentials.tokenUrl, {
@@ -99,18 +122,14 @@ export abstract class ClientAbstract {
                     refresh_token: refreshToken,
                 }
             }).then((response) => {
-                if (tokenStore) {
-                    tokenStore.persist(response.data);
-                }
-
-                resolve(response.data);
+                me.parseResponse(response.data, resolve);
             }).catch(() => {
                 reject()
             });
         });
     }
 
-    private getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
+    private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
         const accessToken = this.tokenStore.get();
         if (!accessToken) {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making an request');
@@ -134,7 +153,7 @@ export abstract class ClientAbstract {
         }
     }
 
-    private newHttpClient(credentials: CredentialsInterface) {
+    private async newHttpClient(credentials: CredentialsInterface): Promise<AxiosInstance> {
         let headers : Record<string, string> = {};
         if (credentials instanceof HttpBasic) {
             headers['Authorization'] = 'Basic ' + btoa(credentials.userName + ':' + credentials.password);
@@ -143,7 +162,8 @@ export abstract class ClientAbstract {
         } else if (credentials instanceof ApiKey) {
             headers[credentials.name] = credentials.token;
         } else if (credentials instanceof OAuth2Abstract) {
-            headers['Authorization'] = 'Bearer ' + this.getAccessToken();
+            const accessToken = await this.getAccessToken();
+            headers['Authorization'] = 'Bearer ' + accessToken;
         }
 
         return axios.create({
@@ -151,4 +171,12 @@ export abstract class ClientAbstract {
         });
     }
 
+    private parseResponse(token: AccessToken, resolve: Function): void {
+        const tokenStore = this.tokenStore;
+        if (tokenStore) {
+            tokenStore.persist(token);
+        }
+
+        resolve(token);
+    }
 }
