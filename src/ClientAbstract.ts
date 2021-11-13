@@ -16,12 +16,13 @@ export abstract class ClientAbstract {
     private static readonly USER_AGENT = 'SDKgen Client v0.1';
     private static readonly EXPIRE_THRESHOLD = 60 * 10;
 
-    protected credentials: CredentialsInterface|null = null
     protected baseUrl: string
-    protected tokenStore: TokenStoreInterface
+    protected credentials: CredentialsInterface|null
+    protected tokenStore: TokenStoreInterface|null
 
-    constructor(baseUrl: string, tokenStore: TokenStoreInterface) {
+    constructor(baseUrl: string, credentials: CredentialsInterface|null = null, tokenStore: TokenStoreInterface|null = null) {
         this.baseUrl = baseUrl;
+        this.credentials = credentials;
         this.tokenStore = tokenStore;
     }
 
@@ -130,6 +131,10 @@ export abstract class ClientAbstract {
     }
 
     private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
+        if (!this.tokenStore) {
+            throw new FoundNoAccessTokenException('No token store was configured');
+        }
+
         const accessToken = this.tokenStore.get();
         if (!accessToken) {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making an request');
