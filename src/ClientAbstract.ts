@@ -70,7 +70,7 @@ export abstract class ClientAbstract {
                     code: code,
                 }
             }).then((response) => {
-                me.parseResponse(response.data, resolve);
+                me.parseTokenResponse(response.data, resolve);
             }).catch(() => {
                 reject()
             });
@@ -96,7 +96,7 @@ export abstract class ClientAbstract {
                     grant_type: 'client_credentials'
                 }
             }).then((response) => {
-                me.parseResponse(response.data, resolve);
+                me.parseTokenResponse(response.data, resolve);
             }).catch(() => {
                 reject()
             });
@@ -123,7 +123,7 @@ export abstract class ClientAbstract {
                     refresh_token: refreshToken,
                 }
             }).then((response) => {
-                me.parseResponse(response.data, resolve);
+                me.parseTokenResponse(response.data, resolve);
             }).catch(() => {
                 reject()
             });
@@ -137,7 +137,7 @@ export abstract class ClientAbstract {
 
         const accessToken = this.tokenStore.get();
         if (!accessToken) {
-            throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making an request');
+            throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making a request');
         }
 
         if (accessToken.expiresIn > (Math.floor(Date.now() / 1000) + expireThreshold)) {
@@ -158,7 +158,11 @@ export abstract class ClientAbstract {
         }
     }
 
-    private async newHttpClient(credentials: CredentialsInterface): Promise<AxiosInstance> {
+    private async newHttpClient(credentials: CredentialsInterface|null = null): Promise<AxiosInstance> {
+        if (credentials === null) {
+            credentials = this.credentials;
+        }
+
         let headers : Record<string, string> = {};
         if (credentials instanceof HttpBasic) {
             headers['Authorization'] = 'Basic ' + btoa(credentials.userName + ':' + credentials.password);
@@ -176,7 +180,7 @@ export abstract class ClientAbstract {
         });
     }
 
-    private parseResponse(token: AccessToken, resolve: Function): void {
+    private parseTokenResponse(token: AccessToken, resolve: Function): void {
         if (this.tokenStore) {
             this.tokenStore.persist(token);
         }
