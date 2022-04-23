@@ -19,11 +19,13 @@ export abstract class ClientAbstract {
     protected baseUrl: string
     protected credentials: CredentialsInterface|null
     protected tokenStore: TokenStoreInterface|null
+    protected scopes: Array<string>|null
 
-    constructor(baseUrl: string, credentials: CredentialsInterface|null = null, tokenStore: TokenStoreInterface|null = null) {
+    constructor(baseUrl: string, credentials: CredentialsInterface|null = null, tokenStore: TokenStoreInterface|null = null, scopes: Array<string>|null = []) {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
         this.tokenStore = tokenStore;
+        this.scopes = scopes;
     }
 
     public buildRedirectUrl(redirectUrl: string|null = null, scopes: Array<string>|null = [], state: string|null = null): string {
@@ -41,6 +43,8 @@ export abstract class ClientAbstract {
 
         if (scopes) {
             url.searchParams.set('scopes', scopes.join(','));
+        } else if (this.scopes) {
+            url.searchParams.set('scopes', this.scopes.join(','));
         }
 
         if (state) {
@@ -87,14 +91,20 @@ export abstract class ClientAbstract {
         const me = this;
 
         return new Promise(function(resolve, reject) {
+            let data: {grant_type: string, scope?: string} = {
+                grant_type: 'client_credentials'
+            };
+
+            if (me.scopes) {
+                data.scope = me.scopes.join(',');
+            }
+
             httpClient.post<AccessToken>(credentials.tokenUrl, {
                 headers: {
                     'User-Agent': ClientAbstract.USER_AGENT,
                     'Accept': 'application/json'
                 },
-                data: {
-                    grant_type: 'client_credentials'
-                }
+                data: data
             }).then((response) => {
                 me.parseTokenResponse(response.data, resolve);
             }).catch(() => {
@@ -130,6 +140,28 @@ export abstract class ClientAbstract {
         });
     }
 
+    protected async newHttpClient(credentials: CredentialsInterface|null = null): Promise<AxiosInstance> {
+        if (credentials === null) {
+            credentials = this.credentials;
+        }
+
+        let headers : Record<string, string> = {};
+        if (credentials instanceof HttpBasic) {
+            headers['Authorization'] = 'Basic ' + btoa(credentials.userName + ':' + credentials.password);
+        } else if (credentials instanceof HttpBearer) {
+            headers['Authorization'] = 'Bearer ' + credentials.token;
+        } else if (credentials instanceof ApiKey) {
+            headers[credentials.name] = credentials.token;
+        } else if (credentials instanceof OAuth2Abstract) {
+            const accessToken = await this.getAccessToken();
+            headers['Authorization'] = 'Bearer ' + accessToken;
+        }
+
+        return axios.create({
+            headers: headers
+        });
+    }
+
     private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
         if (!this.tokenStore) {
             throw new FoundNoAccessTokenException('No token store was configured');
@@ -156,28 +188,6 @@ export abstract class ClientAbstract {
         } else {
             return Promise.resolve(accessToken.accessToken);
         }
-    }
-
-    private async newHttpClient(credentials: CredentialsInterface|null = null): Promise<AxiosInstance> {
-        if (credentials === null) {
-            credentials = this.credentials;
-        }
-
-        let headers : Record<string, string> = {};
-        if (credentials instanceof HttpBasic) {
-            headers['Authorization'] = 'Basic ' + btoa(credentials.userName + ':' + credentials.password);
-        } else if (credentials instanceof HttpBearer) {
-            headers['Authorization'] = 'Bearer ' + credentials.token;
-        } else if (credentials instanceof ApiKey) {
-            headers[credentials.name] = credentials.token;
-        } else if (credentials instanceof OAuth2Abstract) {
-            const accessToken = await this.getAccessToken();
-            headers['Authorization'] = 'Bearer ' + accessToken;
-        }
-
-        return axios.create({
-            headers: headers
-        });
     }
 
     private parseTokenResponse(token: AccessToken, resolve: Function): void {
