@@ -41,9 +41,9 @@ export abstract class ClientAbstract {
             url.searchParams.set('redirect_uri', redirectUrl);
         }
 
-        if (scopes) {
+        if (scopes && scopes.length > 0) {
             url.searchParams.set('scopes', scopes.join(','));
-        } else if (this.scopes) {
+        } else if (this.scopes && this.scopes.length > 0) {
             url.searchParams.set('scopes', this.scopes.join(','));
         }
 
@@ -95,7 +95,7 @@ export abstract class ClientAbstract {
                 grant_type: 'client_credentials'
             };
 
-            if (me.scopes) {
+            if (me.scopes && me.scopes.length > 0) {
                 data.scope = me.scopes.join(',');
             }
 
