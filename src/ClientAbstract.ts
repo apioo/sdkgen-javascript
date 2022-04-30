@@ -145,7 +145,9 @@ export abstract class ClientAbstract {
             credentials = this.credentials;
         }
 
-        let headers : Record<string, string> = {};
+        let headers : Record<string, string> = {
+            Accept: 'application/json'
+        };
         if (credentials instanceof HttpBasic) {
             headers['Authorization'] = 'Basic ' + btoa(credentials.userName + ':' + credentials.password);
         } else if (credentials instanceof HttpBearer) {
@@ -158,7 +160,8 @@ export abstract class ClientAbstract {
         }
 
         return axios.create({
-            headers: headers
+            headers: headers,
+            responseType: 'json',
         });
     }
 
