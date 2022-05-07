@@ -150,8 +150,10 @@ export abstract class ClientAbstract {
     }
 
     private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
+        const timestamp = Math.floor(Date.now() / 1000);
+
         let accessToken = this.tokenStore.get();
-        if (!accessToken && this.credentials instanceof ClientCredentials) {
+        if ((!accessToken || accessToken.expiresIn < timestamp) && this.credentials instanceof ClientCredentials) {
             accessToken = await this.fetchAccessTokenByClientCredentials();
         }
 
@@ -159,7 +161,7 @@ export abstract class ClientAbstract {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making a request');
         }
 
-        if (accessToken.expiresIn > (Math.floor(Date.now() / 1000) + expireThreshold)) {
+        if (accessToken.expiresIn > (timestamp + expireThreshold)) {
             return accessToken.accessToken;
         }
 
