@@ -188,9 +188,7 @@ export abstract class ClientAbstract {
     }
 
     private parseTokenResponse(token: AccessToken, resolve: Function): void {
-        if (this.tokenStore) {
-            this.tokenStore.persist(token);
-        }
+        this.tokenStore.persist(token);
 
         resolve(token);
     }
