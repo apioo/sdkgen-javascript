@@ -10,21 +10,22 @@ import {HttpBearer} from "./Credentials/HttpBearer";
 import {AccessToken} from "./AccessToken";
 import {FoundNoAccessTokenException} from "./Exception/FoundNoAccessTokenException";
 import {ClientCredentials} from "./Credentials/ClientCredentials";
+import {MemoryTokenStore} from "./TokenStore/MemoryTokenStore";
 
 export abstract class ClientAbstract {
 
-    private static readonly USER_AGENT = 'SDKgen Client v0.1';
+    private static readonly USER_AGENT = 'SDKgen Client v0.2';
     private static readonly EXPIRE_THRESHOLD = 60 * 10;
 
     protected baseUrl: string
     protected credentials: CredentialsInterface|null
-    protected tokenStore: TokenStoreInterface|null
+    protected tokenStore: TokenStoreInterface
     protected scopes: Array<string>|null
 
     constructor(baseUrl: string, credentials: CredentialsInterface|null = null, tokenStore: TokenStoreInterface|null = null, scopes: Array<string>|null = []) {
         this.baseUrl = baseUrl;
         this.credentials = credentials;
-        this.tokenStore = tokenStore;
+        this.tokenStore = tokenStore || new MemoryTokenStore();
         this.scopes = scopes;
     }
 
@@ -166,31 +167,24 @@ export abstract class ClientAbstract {
     }
 
     private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = ClientAbstract.EXPIRE_THRESHOLD): Promise<string> {
-        if (!this.tokenStore) {
-            throw new FoundNoAccessTokenException('No token store was configured');
+        let accessToken = this.tokenStore.get();
+        if (!accessToken && this.credentials instanceof ClientCredentials) {
+            accessToken = await this.fetchAccessTokenByClientCredentials();
         }
 
-        const accessToken = this.tokenStore.get();
         if (!accessToken) {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making a request');
         }
 
         if (accessToken.expiresIn > (Math.floor(Date.now() / 1000) + expireThreshold)) {
-            return Promise.resolve(accessToken.accessToken);
+            return accessToken.accessToken;
         }
 
         if (automaticRefresh && accessToken.refreshToken) {
-            const me = this;
-            return new Promise(function(resolve, reject){
-                me.fetchAccessTokenByRefresh(accessToken.refreshToken).then((accessToken) => {
-                    resolve(accessToken.accessToken);
-                }).catch(() => {
-                    reject();
-                });
-            });
-        } else {
-            return Promise.resolve(accessToken.accessToken);
+            accessToken = await this.fetchAccessTokenByRefresh(accessToken.refreshToken);
         }
+
+        return accessToken.accessToken;
     }
 
     private parseTokenResponse(token: AccessToken, resolve: Function): void {
