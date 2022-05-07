@@ -3,7 +3,7 @@ import {TokenStoreInterface} from "./TokenStoreInterface";
 import {AuthorizationCode} from "./Credentials/AuthorizationCode";
 import {InvalidCredentialsException} from "./Exception/InvalidCredentialsException";
 import {HttpBasic} from "./Credentials/HttpBasic";
-import axios, {AxiosInstance} from "axios";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {OAuth2Abstract} from "./Credentials/OAuth2Abstract";
 import {ApiKey} from "./Credentials/ApiKey";
 import {HttpBearer} from "./Credentials/HttpBearer";
@@ -11,6 +11,7 @@ import {AccessToken} from "./AccessToken";
 import {FoundNoAccessTokenException} from "./Exception/FoundNoAccessTokenException";
 import {ClientCredentials} from "./Credentials/ClientCredentials";
 import {MemoryTokenStore} from "./TokenStore/MemoryTokenStore";
+import {InvalidAccessTokenException} from "./Exception/InvalidAccessTokenException";
 
 export abstract class ClientAbstract {
 
@@ -60,26 +61,20 @@ export abstract class ClientAbstract {
             throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 authorization code flow');
         }
 
-        const credentials = this.credentials;
         const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
-        const me = this;
 
-        return new Promise(function(resolve, reject) {
-            httpClient.post<AccessToken>(credentials.tokenUrl, {
-                headers: {
-                    'User-Agent': ClientAbstract.USER_AGENT,
-                    'Accept': 'application/json'
-                },
-                data: {
-                    grant_type: 'authorization_code',
-                    code: code,
-                }
-            }).then((response) => {
-                me.parseTokenResponse(response.data, resolve);
-            }).catch(() => {
-                reject()
-            });
+        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+            headers: {
+                'User-Agent': ClientAbstract.USER_AGENT,
+                'Accept': 'application/json'
+            },
+            data: {
+                grant_type: 'authorization_code',
+                code: code,
+            }
         });
+
+        return this.parseTokenResponse(response);
     }
 
     public async fetchAccessTokenByClientCredentials(): Promise<AccessToken> {
@@ -87,31 +82,25 @@ export abstract class ClientAbstract {
             throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 client credentials flow');
         }
 
-        const credentials = this.credentials;
         const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
-        const me = this;
 
-        return new Promise(function(resolve, reject) {
-            let data: {grant_type: string, scope?: string} = {
-                grant_type: 'client_credentials'
-            };
+        let data: {grant_type: string, scope?: string} = {
+            grant_type: 'client_credentials'
+        };
 
-            if (me.scopes && me.scopes.length > 0) {
-                data.scope = me.scopes.join(',');
-            }
+        if (this.scopes && this.scopes.length > 0) {
+            data.scope = this.scopes.join(',');
+        }
 
-            httpClient.post<AccessToken>(credentials.tokenUrl, {
-                headers: {
-                    'User-Agent': ClientAbstract.USER_AGENT,
-                    'Accept': 'application/json'
-                },
-                data: data
-            }).then((response) => {
-                me.parseTokenResponse(response.data, resolve);
-            }).catch(() => {
-                reject()
-            });
+        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+            headers: {
+                'User-Agent': ClientAbstract.USER_AGENT,
+                'Accept': 'application/json'
+            },
+            data: data
         });
+
+        return this.parseTokenResponse(response);
     }
 
     public async fetchAccessTokenByRefresh(refreshToken: string): Promise<AccessToken> {
@@ -119,26 +108,20 @@ export abstract class ClientAbstract {
             throw new InvalidCredentialsException('The configured credentials do not support the OAuth2 flow');
         }
 
-        const credentials = this.credentials;
         const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
-        const me = this;
 
-        return new Promise(function(resolve, reject) {
-            httpClient.post<AccessToken>(credentials.tokenUrl, {
-                headers: {
-                    'User-Agent': ClientAbstract.USER_AGENT,
-                    'Accept': 'application/json'
-                },
-                data: {
-                    grant_type: 'refresh_token',
-                    refresh_token: refreshToken,
-                }
-            }).then((response) => {
-                me.parseTokenResponse(response.data, resolve);
-            }).catch(() => {
-                reject()
-            });
+        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+            headers: {
+                'User-Agent': ClientAbstract.USER_AGENT,
+                'Accept': 'application/json'
+            },
+            data: {
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            }
         });
+
+        return this.parseTokenResponse(response);
     }
 
     protected async newHttpClient(credentials: CredentialsInterface|null = null): Promise<AxiosInstance> {
@@ -187,9 +170,17 @@ export abstract class ClientAbstract {
         return accessToken.accessToken;
     }
 
-    private parseTokenResponse(token: AccessToken, resolve: Function): void {
-        this.tokenStore.persist(token);
+    private async parseTokenResponse(response: AxiosResponse<AccessToken>): Promise<AccessToken> {
+        if (response.status !== 200) {
+            throw new InvalidAccessTokenException('Could not obtain access token, received a non successful status code: ' + response.status);
+        }
 
-        resolve(token);
+        if (!response.data.accessToken) {
+            throw new InvalidAccessTokenException('Could not obtain access token');
+        }
+
+        this.tokenStore.persist(response.data);
+
+        return response.data;
     }
 }
