@@ -5,14 +5,12 @@ export abstract class OAuth2Abstract implements CredentialsInterface {
     private readonly _clientSecret: string;
     private readonly _tokenUrl: string;
     private readonly _authorizationUrl: string;
-    private readonly _refreshUrl: string;
 
-    constructor(clientId: string, clientSecret: string, tokenUrl: string, authorizationUrl: string, refreshUrl: string) {
+    constructor(clientId: string, clientSecret: string, tokenUrl: string, authorizationUrl: string) {
         this._clientId = clientId;
         this._clientSecret = clientSecret;
         this._tokenUrl = tokenUrl;
         this._authorizationUrl = authorizationUrl;
-        this._refreshUrl = refreshUrl;
     }
 
     get clientId(): string {
@@ -29,9 +27,5 @@ export abstract class OAuth2Abstract implements CredentialsInterface {
 
     get authorizationUrl(): string {
         return this._authorizationUrl;
-    }
-
-    get refreshUrl(): string {
-        return this._refreshUrl;
     }
 }
