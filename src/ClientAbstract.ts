@@ -64,14 +64,13 @@ export abstract class ClientAbstract {
         const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
         const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+            grant_type: 'authorization_code',
+            code: code,
+        }, {
             headers: {
                 'User-Agent': ClientAbstract.USER_AGENT,
                 'Accept': 'application/json'
             },
-            data: {
-                grant_type: 'authorization_code',
-                code: code,
-            }
         });
 
         return this.parseTokenResponse(response);
@@ -92,12 +91,11 @@ export abstract class ClientAbstract {
             data.scope = this.scopes.join(',');
         }
 
-        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, data, {
             headers: {
                 'User-Agent': ClientAbstract.USER_AGENT,
                 'Accept': 'application/json'
             },
-            data: data
         });
 
         return this.parseTokenResponse(response);
@@ -111,14 +109,13 @@ export abstract class ClientAbstract {
         const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
         const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+        }, {
             headers: {
                 'User-Agent': ClientAbstract.USER_AGENT,
                 'Accept': 'application/json'
             },
-            data: {
-                grant_type: 'refresh_token',
-                refresh_token: refreshToken,
-            }
         });
 
         return this.parseTokenResponse(response);
