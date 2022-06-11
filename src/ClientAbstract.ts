@@ -150,7 +150,7 @@ export abstract class ClientAbstract {
         const timestamp = Math.floor(Date.now() / 1000);
 
         let accessToken = this.tokenStore.get();
-        if ((!accessToken || accessToken.expiresIn < timestamp) && this.credentials instanceof ClientCredentials) {
+        if ((!accessToken || accessToken.expires_in < timestamp) && this.credentials instanceof ClientCredentials) {
             accessToken = await this.fetchAccessTokenByClientCredentials();
         }
 
@@ -158,15 +158,15 @@ export abstract class ClientAbstract {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making a request');
         }
 
-        if (accessToken.expiresIn > (timestamp + expireThreshold)) {
-            return accessToken.accessToken;
+        if (accessToken.expires_in > (timestamp + expireThreshold)) {
+            return accessToken.access_token;
         }
 
-        if (automaticRefresh && accessToken.refreshToken) {
-            accessToken = await this.fetchAccessTokenByRefresh(accessToken.refreshToken);
+        if (automaticRefresh && accessToken.refresh_token) {
+            accessToken = await this.fetchAccessTokenByRefresh(accessToken.refresh_token);
         }
 
-        return accessToken.accessToken;
+        return accessToken.access_token;
     }
 
     private async parseTokenResponse(response: AxiosResponse<AccessToken>): Promise<AccessToken> {
@@ -174,7 +174,7 @@ export abstract class ClientAbstract {
             throw new InvalidAccessTokenException('Could not obtain access token, received a non successful status code: ' + response.status);
         }
 
-        if (!response.data.accessToken) {
+        if (!response.data.access_token) {
             throw new InvalidAccessTokenException('Could not obtain access token');
         }
 
