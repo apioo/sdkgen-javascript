@@ -20,4 +20,8 @@ export class SessionTokenStore implements TokenStoreInterface {
     persist(token: AccessToken): void {
         sessionStorage.setItem(this.key, JSON.stringify(token));
     }
+
+    remove(): void {
+        sessionStorage.removeItem(this.key);
+    }
 }

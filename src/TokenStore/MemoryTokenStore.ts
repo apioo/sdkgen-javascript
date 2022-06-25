@@ -11,4 +11,8 @@ export class MemoryTokenStore implements TokenStoreInterface {
     persist(token: AccessToken): void {
         this.token = token;
     }
+
+    remove(): void {
+        this.token = null;
+    }
 }

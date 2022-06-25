@@ -20,4 +20,8 @@ export class LocalStorageTokenStore implements TokenStoreInterface {
     persist(token: AccessToken): void {
         localStorage.setItem(this.key, JSON.stringify(token));
     }
+
+    remove(): void {
+        localStorage.removeItem(this.key);
+    }
 }
