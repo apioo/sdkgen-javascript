@@ -1,6 +1,6 @@
 {
   "name": "sdkgen-client",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "SDKgen client",
   "keywords": [
     "sdkgen",
@@ -13,6 +13,7 @@
   "homepage": "https://sdkgen.app",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
     "build": "tsc"
   },
