@@ -68,8 +68,7 @@ export abstract class ClientAbstract {
             code: code,
         }, {
             headers: {
-                'User-Agent': ClientAbstract.USER_AGENT,
-                'Accept': 'application/json'
+                Accept: 'application/json'
             },
         });
 
@@ -93,8 +92,7 @@ export abstract class ClientAbstract {
 
         const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, data, {
             headers: {
-                'User-Agent': ClientAbstract.USER_AGENT,
-                'Accept': 'application/json'
+                Accept: 'application/json'
             },
         });
 
@@ -113,8 +111,7 @@ export abstract class ClientAbstract {
             refresh_token: refreshToken,
         }, {
             headers: {
-                'User-Agent': ClientAbstract.USER_AGENT,
-                'Accept': 'application/json'
+                Accept: 'application/json'
             },
         });
 
