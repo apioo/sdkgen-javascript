@@ -7,7 +7,7 @@ export class Parser {
         this.baseUrl = baseUrl;
     }
 
-    public url(path: string, parameters: Record<string, string>): string {
+    public url(path: string, parameters: Record<string, any>): string {
 
         let url = this.baseUrl;
         if (url.endsWith('/')) {
@@ -21,7 +21,7 @@ export class Parser {
         return this.substituteParameters(url + '/' + path, parameters)
     }
 
-    public query(parameters: Record<string, string>): Record<string, string> {
+    public query(parameters: Record<string, any>): Record<string, string> {
         let result: Record<string, string> = {};
         for (const [name, value] of Object.entries(parameters)) {
             if (value === null || value === undefined) {
@@ -34,7 +34,7 @@ export class Parser {
         return result;
     }
 
-    private substituteParameters(url: string, parameters: Record<string, string>): string {
+    private substituteParameters(url: string, parameters: Record<string, any>): string {
         for (const [name, value] of Object.entries(parameters)) {
             if (value === null || value === undefined) {
                 continue;
