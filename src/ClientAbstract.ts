@@ -4,6 +4,7 @@ import {AuthenticatorFactory} from "./AuthenticatorFactory";
 import {Anonymous} from "./Credentials/Anonymous";
 import {AuthenticatorInterface} from "./AuthenticatorInterface";
 import {HttpClientFactory} from "./HttpClientFactory";
+import {AxiosInstance} from "axios";
 
 export abstract class ClientAbstract {
 
@@ -11,7 +12,7 @@ export abstract class ClientAbstract {
 
     protected baseUrl: string
     protected authenticator: AuthenticatorInterface
-    protected client: AuthenticatorInterface
+    protected client: AxiosInstance
     protected parser: Parser
 
     constructor(baseUrl: string, credentials: CredentialsInterface|null = null) {

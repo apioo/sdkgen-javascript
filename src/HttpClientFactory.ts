@@ -1,5 +1,5 @@
 import {AuthenticatorInterface} from "./AuthenticatorInterface";
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 import {ClientAbstract} from "./ClientAbstract";
 
 export class HttpClientFactory {
@@ -9,7 +9,7 @@ export class HttpClientFactory {
         this.authenticator = authenticator;
     }
 
-    public factory() {
+    public factory(): AxiosInstance {
         let headers : Record<string, string> = {
             'User-Agent': ClientAbstract.USER_AGENT,
             'Accept': 'application/json',
