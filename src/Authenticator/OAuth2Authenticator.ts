@@ -11,7 +11,7 @@ import {HttpClientFactory} from "../HttpClientFactory";
 import {AuthenticatorFactory} from "../AuthenticatorFactory";
 import {CredentialsInterface} from "../CredentialsInterface";
 
-export class OAuth2 implements AuthenticatorInterface {
+export class OAuth2Authenticator implements AuthenticatorInterface {
     private static readonly EXPIRE_THRESHOLD = 60 * 10;
 
     private credentials: Credentials;
@@ -106,7 +106,7 @@ export class OAuth2 implements AuthenticatorInterface {
     }
 
 
-    private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = OAuth2.EXPIRE_THRESHOLD): Promise<string> {
+    private async getAccessToken(automaticRefresh: boolean = true, expireThreshold: number = OAuth2Authenticator.EXPIRE_THRESHOLD): Promise<string> {
         const timestamp = Math.floor(Date.now() / 1000);
 
         let accessToken = this.tokenStore.get();

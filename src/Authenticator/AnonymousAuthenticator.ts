@@ -1,8 +1,8 @@
-import {HttpBearer as Credentials} from "../Credentials/HttpBearer";
+import {Anonymous as Credentials} from "../Credentials/Anonymous";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
 import {AxiosRequestConfig} from "axios";
 
-export class HttpBearer implements AuthenticatorInterface {
+export class AnonymousAuthenticator implements AuthenticatorInterface {
     private credentials: Credentials;
 
     constructor(credentials: Credentials) {
@@ -10,9 +10,6 @@ export class HttpBearer implements AuthenticatorInterface {
     }
 
     async handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
-        config.headers = config.headers || {};
-        config.headers['Authorization'] = 'Bearer ' + this.credentials.token;
-
         return config;
     }
 }

@@ -1,8 +1,8 @@
-import {HttpBasic as Credentials} from "../Credentials/HttpBasic";
+import {ApiKey as Credentials} from "../Credentials/ApiKey";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
 import {AxiosRequestConfig} from "axios";
 
-export class HttpBasic implements AuthenticatorInterface {
+export class ApiKeyAuthenticator implements AuthenticatorInterface {
     private credentials: Credentials;
 
     constructor(credentials: Credentials) {
@@ -10,10 +10,8 @@ export class HttpBasic implements AuthenticatorInterface {
     }
 
     async handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
-        config.auth = {
-            username: this.credentials.userName,
-            password: this.credentials.password
-        };
+        config.headers = config.headers || {};
+        config.headers[this.credentials.name] = this.credentials.token;
 
         return config;
     }

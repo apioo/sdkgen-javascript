@@ -2,15 +2,15 @@ import {AuthenticatorInterface} from "./AuthenticatorInterface";
 import {CredentialsInterface} from "./CredentialsInterface";
 import {InvalidCredentialsException} from "./Exception/Authenticator/InvalidCredentialsException";
 import {HttpBasic} from "./Credentials/HttpBasic";
-import {HttpBasic as HttpBasicAuthenticator} from "./Authenticator/HttpBasic";
 import {HttpBearer} from "./Credentials/HttpBearer";
-import {HttpBearer as HttpBearerAuthenticator} from "./Authenticator/HttpBearer";
 import {ApiKey} from "./Credentials/ApiKey";
-import {ApiKey as ApiKeyAuthenticator} from "./Authenticator/ApiKey";
 import {OAuth2Abstract} from "./Credentials/OAuth2Abstract";
-import {OAuth2 as OAuth2Authenticator} from "./Authenticator/OAuth2";
 import {Anonymous} from "./Credentials/Anonymous";
-import {Anonymous as AnonymousAuthenticator} from "./Authenticator/Anonymous";
+import {HttpBasicAuthenticator} from "./Authenticator/HttpBasicAuthenticator";
+import {HttpBearerAuthenticator} from "./Authenticator/HttpBearerAuthenticator";
+import {ApiKeyAuthenticator} from "./Authenticator/ApiKeyAuthenticator";
+import {OAuth2Authenticator} from "./Authenticator/OAuth2Authenticator";
+import {AnonymousAuthenticator} from "./Authenticator/AnonymousAuthenticator";
 
 export class AuthenticatorFactory {
     public static factory(credentials: CredentialsInterface): AuthenticatorInterface {
