@@ -1,7 +1,7 @@
-import {AxiosRequestConfig} from "axios";
+import {InternalAxiosRequestConfig} from "axios";
 
 export interface AuthenticatorInterface {
 
-    handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig>;
+    handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig>;
 
 }

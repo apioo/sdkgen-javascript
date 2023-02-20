@@ -3,7 +3,7 @@ import {AuthenticatorInterface} from "../AuthenticatorInterface";
 import {AccessToken} from "../AccessToken";
 import {HttpBasic} from "../Credentials/HttpBasic";
 import {ClientCredentials} from "../Credentials/ClientCredentials";
-import {AxiosRequestConfig, AxiosResponse} from "axios";
+import {InternalAxiosRequestConfig, AxiosResponse} from "axios";
 import {TokenStoreInterface} from "../TokenStoreInterface";
 import {InvalidAccessTokenException} from "../Exception/Authenticator/InvalidAccessTokenException";
 import {FoundNoAccessTokenException} from "../Exception/Authenticator/FoundNoAccessTokenException";
@@ -24,7 +24,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         this.scopes = credentials.scopes;
     }
 
-    async handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+    async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
         const accessToken = await this.getAccessToken();
 
         config.headers = config.headers || {};

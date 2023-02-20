@@ -1,6 +1,6 @@
 import {ApiKey as Credentials} from "../Credentials/ApiKey";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
-import {AxiosRequestConfig} from "axios";
+import {InternalAxiosRequestConfig} from "axios";
 
 export class ApiKeyAuthenticator implements AuthenticatorInterface {
     private credentials: Credentials;
@@ -9,7 +9,7 @@ export class ApiKeyAuthenticator implements AuthenticatorInterface {
         this.credentials = credentials;
     }
 
-    async handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+    async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
         config.headers = config.headers || {};
         config.headers[this.credentials.name] = this.credentials.token;
 

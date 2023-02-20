@@ -1,6 +1,6 @@
 import {Anonymous as Credentials} from "../Credentials/Anonymous";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
-import {AxiosRequestConfig} from "axios";
+import {InternalAxiosRequestConfig} from "axios";
 
 export class AnonymousAuthenticator implements AuthenticatorInterface {
     private credentials: Credentials;
@@ -9,7 +9,7 @@ export class AnonymousAuthenticator implements AuthenticatorInterface {
         this.credentials = credentials;
     }
 
-    async handle(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+    async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
         return config;
     }
 }
