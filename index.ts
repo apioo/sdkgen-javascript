@@ -7,11 +7,9 @@ export * from "./src/Authenticator/OAuth2Authenticator";
 
 export * from "./src/Credentials/Anonymous";
 export * from "./src/Credentials/ApiKey";
-export * from "./src/Credentials/AuthorizationCode";
-export * from "./src/Credentials/ClientCredentials";
 export * from "./src/Credentials/HttpBasic";
 export * from "./src/Credentials/HttpBearer";
-export * from "./src/Credentials/OAuth2Abstract";
+export * from "./src/Credentials/OAuth2";
 
 export * from "./src/Exception/ClientException";
 export * from "./src/Exception/KnownStatusCodeException";

@@ -4,7 +4,7 @@ import {InvalidCredentialsException} from "./Exception/Authenticator/InvalidCred
 import {HttpBasic} from "./Credentials/HttpBasic";
 import {HttpBearer} from "./Credentials/HttpBearer";
 import {ApiKey} from "./Credentials/ApiKey";
-import {OAuth2Abstract} from "./Credentials/OAuth2Abstract";
+import {OAuth2} from "./Credentials/OAuth2";
 import {Anonymous} from "./Credentials/Anonymous";
 import {HttpBasicAuthenticator} from "./Authenticator/HttpBasicAuthenticator";
 import {HttpBearerAuthenticator} from "./Authenticator/HttpBearerAuthenticator";
@@ -20,7 +20,7 @@ export class AuthenticatorFactory {
             return new HttpBearerAuthenticator(credentials);
         } else if (credentials instanceof ApiKey) {
             return new ApiKeyAuthenticator(credentials);
-        } else if (credentials instanceof OAuth2Abstract) {
+        } else if (credentials instanceof OAuth2) {
             return new OAuth2Authenticator(credentials);
         } else if (credentials instanceof Anonymous) {
             return new AnonymousAuthenticator(credentials);

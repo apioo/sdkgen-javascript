@@ -1,8 +1,7 @@
-import {OAuth2Abstract as Credentials} from "../Credentials/OAuth2Abstract";
+import {OAuth2 as Credentials} from "../Credentials/OAuth2";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
 import {AccessToken} from "../AccessToken";
 import {HttpBasic} from "../Credentials/HttpBasic";
-import {ClientCredentials} from "../Credentials/ClientCredentials";
 import {InternalAxiosRequestConfig, AxiosResponse} from "axios";
 import {TokenStoreInterface} from "../TokenStoreInterface";
 import {InvalidAccessTokenException} from "../Exception/Authenticator/InvalidAccessTokenException";
@@ -110,7 +109,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         const timestamp = Math.floor(Date.now() / 1000);
 
         let accessToken = this.tokenStore.get();
-        if ((!accessToken || accessToken.expires_in < timestamp) && this.credentials instanceof ClientCredentials) {
+        if (!accessToken || accessToken.expires_in < timestamp) {
             accessToken = await this.fetchAccessTokenByClientCredentials();
         }
 

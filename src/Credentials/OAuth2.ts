@@ -2,7 +2,7 @@ import {CredentialsInterface} from "../CredentialsInterface";
 import {TokenStoreInterface} from "../TokenStoreInterface";
 import {MemoryTokenStore} from "../TokenStore/MemoryTokenStore";
 
-export abstract class OAuth2Abstract implements CredentialsInterface {
+export class OAuth2 implements CredentialsInterface {
     private readonly _clientId: string;
     private readonly _clientSecret: string;
     private readonly _tokenUrl: string;
