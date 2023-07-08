@@ -24,12 +24,16 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
     }
 
     async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
-        const accessToken = await this.getAccessToken();
+        try {
+            const accessToken = await this.getAccessToken();
 
-        config.headers = config.headers || {};
-        config.headers['Authorization'] = 'Bearer ' + accessToken;
+            config.headers = config.headers || {};
+            config.headers['Authorization'] = 'Bearer ' + accessToken;
 
-        return config;
+            return config;
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 
     public buildRedirectUrl(redirectUrl: string|null = null, scopes: Array<string>|null = [], state: string|null = null): string {
