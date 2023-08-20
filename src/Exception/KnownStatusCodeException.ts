@@ -1,5 +1,7 @@
 import {ClientException} from "./ClientException";
 
-export class KnownStatusCodeException extends ClientException {
+export abstract class KnownStatusCodeException extends ClientException {
+
+    abstract getPayload(): any;
 
 }
