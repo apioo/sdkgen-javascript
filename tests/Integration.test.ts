@@ -1,6 +1,6 @@
 
 import {describe, expect, test} from '@jest/globals';
-import Client from "./Generated/Client";
+import {Client} from "./Generated/Client";
 import {TestRequest} from "./Generated/TestRequest";
 import {TestObject} from "./Generated/TestObject";
 import {TestMapScalar} from "./Generated/TestMapScalar";
@@ -10,7 +10,7 @@ describe('integration', () => {
     test('client get all', async () => {
         const client = Client.build('my_token');
 
-        const response = await client.getAll(8, 16, 'foobar');
+        const response = await client.product().getAll(8, 16, 'foobar');
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
@@ -27,7 +27,7 @@ describe('integration', () => {
         const client = Client.build('my_token');
 
         const payload = newPayload();
-        const response = await client.create(payload);
+        const response = await client.product().create(payload);
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
@@ -44,7 +44,7 @@ describe('integration', () => {
         const client = Client.build('my_token');
 
         const payload = newPayload();
-        const response = await client.update(1, payload);
+        const response = await client.product().update(1, payload);
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
@@ -61,7 +61,7 @@ describe('integration', () => {
         const client = Client.build('my_token');
 
         const payload = newPayload();
-        const response = await client.patch(1, payload);
+        const response = await client.product().patch(1, payload);
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
@@ -77,7 +77,7 @@ describe('integration', () => {
     test('client delete', async () => {
         const client = Client.build('my_token');
 
-        const response = await client.delete(1);
+        const response = await client.product().delete(1);
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
