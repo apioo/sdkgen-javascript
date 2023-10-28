@@ -123,7 +123,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         const timestamp = Math.floor(Date.now() / 1000);
 
         let accessToken = this.tokenStore.get();
-        if (!accessToken || accessToken.expires_in < timestamp) {
+        if (!accessToken || this.getExpiresInTimestamp(accessToken.expires_in) < timestamp) {
             accessToken = await this.fetchAccessTokenByClientCredentials();
         }
 
@@ -131,7 +131,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
             throw new FoundNoAccessTokenException('Found no access token, please obtain an access token before making a request');
         }
 
-        if (accessToken.expires_in > (timestamp + expireThreshold)) {
+        if (this.getExpiresInTimestamp(accessToken.expires_in) > (timestamp + expireThreshold)) {
             return accessToken.access_token;
         }
 
@@ -140,6 +140,19 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         }
 
         return accessToken.access_token;
+    }
+
+    private getExpiresInTimestamp(expiresIn: number): number
+    {
+        const nowTimestamp = Math.floor(Date.now() / 1000);
+
+        if (expiresIn < 529196400) {
+            // in case the expires in is lower than 1986-10-09 we assume that the field represents the duration in seconds
+            // otherwise it is probably a timestamp
+            expiresIn = nowTimestamp + expiresIn;
+        }
+
+        return expiresIn;
     }
 
     private async parseTokenResponse(response: AxiosResponse<AccessToken>): Promise<AccessToken> {
