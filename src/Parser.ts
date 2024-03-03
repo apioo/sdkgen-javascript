@@ -36,9 +36,7 @@ export class Parser {
 
             if (structNames && structNames.includes(name)) {
                 if (typeof value === 'object') {
-                    for (const [nestedName, nestedValue] of Object.entries(value)) {
-                        result[nestedName] = this.toString(nestedValue);
-                    }
+                    result = {...result, ...this.query(value)};
                 }
             } else {
                 result[name] = this.toString(value);
