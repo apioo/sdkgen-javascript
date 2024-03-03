@@ -12,7 +12,6 @@ import {describe, expect, test} from '@jest/globals';
 import {Parser} from '../src/Parser';
 import {LocalDate, LocalDateTime, LocalTime} from "@js-joda/core";
 import {TestObject} from "./Generated/TestObject";
-import {parse} from "ts-jest";
 
 describe('parser', () => {
     test('url parsing', () => {
