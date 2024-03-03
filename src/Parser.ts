@@ -27,14 +27,22 @@ export class Parser {
         return this.baseUrl + '/' + this.substituteParameters(path, parameters)
     }
 
-    public query(parameters: Record<string, any>): Record<string, string> {
+    public query(parameters: Record<string, any>, structNames?: Array<string>): Record<string, string> {
         let result: Record<string, string> = {};
         for (const [name, value] of Object.entries(parameters)) {
             if (value === null || value === undefined) {
                 continue;
             }
 
-            result[name] = this.toString(value);
+            if (structNames && structNames.includes(name)) {
+                if (typeof value === 'object') {
+                    for (const [nestedName, nestedValue] of Object.entries(value)) {
+                        result[nestedName] = this.toString(nestedValue);
+                    }
+                }
+            } else {
+                result[name] = this.toString(value);
+            }
         }
 
         return result;
