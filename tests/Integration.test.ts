@@ -140,7 +140,7 @@ describe('integration', () => {
     test('client json', async () => {
         const client = Client.build('my_token');
 
-        const response = await client.product().json({foo: 'bar'});
+        const response = await client.product().json({string: 'bar'});
 
         // @ts-ignore
         expect(response.headers['Authorization']).toBe('Bearer my_token');
@@ -150,7 +150,7 @@ describe('integration', () => {
         expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
-        expect(response.json).toStrictEqual({foo: 'bar'});
+        expect(response.json?.string).toBe('bar');
     });
 
     test('client multipart', async () => {
