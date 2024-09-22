@@ -137,6 +137,22 @@ describe('integration', () => {
         expect(response.form).toStrictEqual({foo: 'bar'});
     });
 
+    test('client json', async () => {
+        const client = Client.build('my_token');
+
+        const response = await client.product().json({foo: 'bar'});
+
+        // @ts-ignore
+        expect(response.headers['Authorization']).toBe('Bearer my_token');
+        // @ts-ignore
+        expect(response.headers['Accept']).toBe('application/json');
+        // @ts-ignore
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.method).toBe('POST');
+        expect(response.args).toStrictEqual({});
+        expect(response.json).toStrictEqual({foo: 'bar'});
+    });
+
     test('client multipart', async () => {
         const client = Client.build('my_token');
 
