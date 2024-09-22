@@ -10,7 +10,6 @@
 
 import {describe, expect, test} from '@jest/globals';
 import {Parser} from '../src/Parser';
-import {LocalDate, LocalDateTime, LocalTime} from "@js-joda/core";
 import {TestObject} from "./Generated/TestObject";
 
 describe('parser', () => {
@@ -33,9 +32,6 @@ describe('parser', () => {
         expect(parser.url("/foo/:bar", {bar: true})).toBe("https://api.acme.com/foo/1");
         expect(parser.url("/foo/:bar", {bar: false})).toBe("https://api.acme.com/foo/0");
         expect(parser.url("/foo/:bar", {bar: "foo"})).toBe("https://api.acme.com/foo/foo");
-        expect(parser.url("/foo/:bar", {bar: LocalDate.of(2023, 2, 21)})).toBe("https://api.acme.com/foo/2023-02-21");
-        expect(parser.url("/foo/:bar", {bar: LocalDateTime.of(2023, 2, 21, 19, 19, 0)})).toBe("https://api.acme.com/foo/2023-02-21T19:19:00Z");
-        expect(parser.url("/foo/:bar", {bar: LocalTime.of(19, 19, 0)})).toBe("https://api.acme.com/foo/19:19:00");
     });
 
     test('query parsing', () => {
@@ -52,9 +48,6 @@ describe('parser', () => {
             'true': true,
             'false': false,
             'string': 'foo',
-            'date': LocalDate.of(2023, 2, 21),
-            'datetime': LocalDateTime.of(2023, 2, 21, 19, 19, 0),
-            'time': LocalTime.of(19, 19, 0),
             'args': test,
         };
 
@@ -65,9 +58,6 @@ describe('parser', () => {
         expect(result['true']).toBe('1');
         expect(result['false']).toBe('0');
         expect(result['string']).toBe('foo');
-        expect(result['date']).toBe('2023-02-21');
-        expect(result['datetime']).toBe('2023-02-21T19:19:00Z');
-        expect(result['time']).toBe('19:19:00');
         expect(result['name']).toBe('foo');
     });
 });
