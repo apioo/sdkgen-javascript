@@ -3,7 +3,7 @@
  * {@link https://sdkgen.app}
  */
 
-import {KnownStatusCodeException} from "sdkgen-client"
+import {KnownStatusCodeException} from "../../src/Exception/KnownStatusCodeException"
 
 
 export class FormException extends KnownStatusCodeException {

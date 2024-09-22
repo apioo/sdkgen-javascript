@@ -4,8 +4,9 @@
  */
 
 import axios, {AxiosRequestConfig} from "axios";
-import {TagAbstract} from "sdkgen-client"
-import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
+import {TagAbstract} from "../../src/TagAbstract"
+import {ClientException} from "../../src/Exception/ClientException";
+import {UnknownStatusCodeException} from "../../src/Exception/UnknownStatusCodeException";
 
 import {BinaryException} from "./BinaryException";
 import {FormException} from "./FormException";
