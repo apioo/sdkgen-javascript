@@ -4,10 +4,11 @@
  */
 
 import axios, {AxiosRequestConfig} from "axios";
+import {ClientAbstract, CredentialsInterface, TokenStoreInterface} from "sdkgen-client"
+import {HttpBearer} from "sdkgen-client"
+import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ProductTag} from "./ProductTag";
-import {ClientAbstract} from "../../src/ClientAbstract";
-import {HttpBearer} from "../../src/Credentials/HttpBearer";
 
 export class Client extends ClientAbstract {
     public product(): ProductTag
@@ -23,5 +24,10 @@ export class Client extends ClientAbstract {
     public static build(token: string): Client
     {
         return new Client('http://127.0.0.1:8081', new HttpBearer(token));
+    }
+
+    public static buildAnonymous(): Client
+    {
+        return new Client('http://127.0.0.1:8081', new Anonymous());
     }
 }
