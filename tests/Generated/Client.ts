@@ -4,9 +4,10 @@
  */
 
 import axios, {AxiosRequestConfig} from "axios";
-import {ClientAbstract} from "../../src/ClientAbstract"
-import {HttpBearer} from "../../src/Credentials/HttpBearer"
-import {Anonymous} from "../../src/Credentials/Anonymous"
+import {ClientAbstract, CredentialsInterface, TokenStoreInterface} from "sdkgen-client"
+import {HttpBearer} from "sdkgen-client"
+import {Anonymous} from "sdkgen-client"
+import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
 import {ProductTag} from "./ProductTag";
 

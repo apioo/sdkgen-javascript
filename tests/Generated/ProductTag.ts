@@ -4,12 +4,18 @@
  */
 
 import axios, {AxiosRequestConfig} from "axios";
-import {TagAbstract} from "../../src/TagAbstract"
-import {ClientException} from "../../src/Exception/ClientException";
-import {UnknownStatusCodeException} from "../../src/Exception/UnknownStatusCodeException";
+import {TagAbstract} from "sdkgen-client"
+import {ClientException, UnknownStatusCodeException} from "sdkgen-client";
 
+import {BinaryException} from "./BinaryException";
+import {FormException} from "./FormException";
+import {JsonException} from "./JsonException";
+import {MultipartException} from "./MultipartException";
 import {TestRequest} from "./TestRequest";
 import {TestResponse} from "./TestResponse";
+import {TestResponseException} from "./TestResponseException";
+import {TextException} from "./TextException";
+import {XmlException} from "./XmlException";
 
 export class ProductTag extends TagAbstract {
     /**
@@ -55,6 +61,7 @@ export class ProductTag extends TagAbstract {
      * Creates a new product
      *
      * @returns {Promise<TestResponse>}
+     * @throws {TestResponseException}
      * @throws {ClientException}
      */
     public async create(payload: TestRequest): Promise<TestResponse> {
@@ -81,6 +88,10 @@ export class ProductTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
+
+                if (statusCode === 500) {
+                    throw new TestResponseException(error.response.data);
+                }
 
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
@@ -208,6 +219,7 @@ export class ProductTag extends TagAbstract {
      * Test binary content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {BinaryException}
      * @throws {ClientException}
      */
     public async binary(payload: ArrayBuffer): Promise<TestResponse> {
@@ -235,6 +247,10 @@ export class ProductTag extends TagAbstract {
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
 
+                if (statusCode === 500) {
+                    throw new BinaryException(error.response.data);
+                }
+
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
@@ -246,6 +262,7 @@ export class ProductTag extends TagAbstract {
      * Test form content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {FormException}
      * @throws {ClientException}
      */
     public async form(payload: URLSearchParams): Promise<TestResponse> {
@@ -273,6 +290,10 @@ export class ProductTag extends TagAbstract {
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
 
+                if (statusCode === 500) {
+                    throw new FormException(error.response.data);
+                }
+
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
@@ -284,6 +305,7 @@ export class ProductTag extends TagAbstract {
      * Test json content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {JsonException}
      * @throws {ClientException}
      */
     public async json(payload: any): Promise<TestResponse> {
@@ -311,6 +333,10 @@ export class ProductTag extends TagAbstract {
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
 
+                if (statusCode === 500) {
+                    throw new JsonException(error.response.data);
+                }
+
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
@@ -322,6 +348,7 @@ export class ProductTag extends TagAbstract {
      * Test json content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {MultipartException}
      * @throws {ClientException}
      */
     public async multipart(payload: FormData): Promise<TestResponse> {
@@ -348,6 +375,10 @@ export class ProductTag extends TagAbstract {
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
 
+                if (statusCode === 500) {
+                    throw new MultipartException(error.response.data);
+                }
+
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
@@ -359,6 +390,7 @@ export class ProductTag extends TagAbstract {
      * Test text content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {TextException}
      * @throws {ClientException}
      */
     public async text(payload: string): Promise<TestResponse> {
@@ -386,6 +418,10 @@ export class ProductTag extends TagAbstract {
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
 
+                if (statusCode === 500) {
+                    throw new TextException(error.response.data);
+                }
+
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
                 throw new ClientException('An unknown error occurred: ' + String(error));
@@ -397,6 +433,7 @@ export class ProductTag extends TagAbstract {
      * Test xml content type
      *
      * @returns {Promise<TestResponse>}
+     * @throws {XmlException}
      * @throws {ClientException}
      */
     public async xml(payload: string): Promise<TestResponse> {
@@ -423,6 +460,10 @@ export class ProductTag extends TagAbstract {
                 throw error;
             } else if (axios.isAxiosError(error) && error.response) {
                 const statusCode = error.response.status;
+
+                if (statusCode === 500) {
+                    throw new XmlException(error.response.data);
+                }
 
                 throw new UnknownStatusCodeException('The server returned an unknown status code: ' + statusCode);
             } else {
