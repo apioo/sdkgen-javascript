@@ -8,19 +8,11 @@
  * file that was distributed with this source code.
  */
 
-import {DateTimeFormatter, LocalDate, LocalDateTime, LocalTime} from "@js-joda/core";
-
 export class Parser {
     private readonly baseUrl: string;
-    private readonly dateFormatter: DateTimeFormatter;
-    private readonly dateTimeFormatter: DateTimeFormatter;
-    private readonly timeFormatter: DateTimeFormatter;
 
     public constructor(baseUrl: string) {
         this.baseUrl = this.normalizeBaseUrl(baseUrl);
-        this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        this.dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        this.timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     }
 
     public url(path: string, parameters: Record<string, any>): string {
@@ -86,12 +78,6 @@ export class Parser {
             }
         } else if (typeof value === 'boolean') {
             return value ? '1' : '0';
-        } else if (value instanceof LocalDate) {
-            return value.format(this.dateFormatter);
-        } else if (value instanceof LocalTime) {
-            return value.format(this.timeFormatter);
-        } else if (value instanceof LocalDateTime) {
-            return value.format(this.dateTimeFormatter);
         } else if (value instanceof Date) {
             return value.toISOString();
         } else {
