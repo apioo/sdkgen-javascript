@@ -18,7 +18,7 @@ import {AuthenticatorInterface} from "./AuthenticatorInterface";
 
 export abstract class ClientAbstract {
 
-    public static readonly USER_AGENT = 'SDKgen Client v1.0';
+    public static readonly USER_AGENT = 'SDKgen Client v2.0';
 
     protected authenticator: AuthenticatorInterface
     protected httpClient: AxiosInstance
