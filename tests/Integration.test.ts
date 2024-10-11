@@ -28,7 +28,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('GET');
         expect(response.args).toStrictEqual({startIndex: '8', count: '16', search: 'foobar'});
         expect(response.json).toBe(null);
@@ -45,7 +45,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.json).toStrictEqual(payload);
@@ -62,7 +62,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('PUT');
         expect(response.args).toStrictEqual({});
         expect(response.json).toStrictEqual(payload);
@@ -79,7 +79,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('PATCH');
         expect(response.args).toStrictEqual({});
         expect(response.json).toStrictEqual(payload);
@@ -95,7 +95,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('DELETE');
         expect(response.args).toStrictEqual({});
         expect(response.json).toBe(null);
@@ -113,7 +113,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.data).toBe('foobar');
@@ -131,7 +131,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.form).toStrictEqual({foo: 'bar'});
@@ -147,7 +147,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.json?.string).toBe('bar');
@@ -166,7 +166,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.files).toStrictEqual({foo: 'foobar'});
@@ -182,7 +182,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.data).toBe('foobar');
@@ -198,7 +198,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['Accept']).toBe('application/json');
         // @ts-ignore
-        expect(response.headers['User-Agent']).toBe('SDKgen Client v1.0');
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
         expect(response.args).toStrictEqual({});
         expect(response.data).toBe('<foo>bar</foo>');
