@@ -69,7 +69,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
     }
 
     public async fetchAccessTokenByCode(code: string): Promise<AccessToken> {
-        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
         const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
             grant_type: 'authorization_code',
@@ -84,7 +84,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
     }
 
     public async fetchAccessTokenByClientCredentials(): Promise<AccessToken> {
-        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
         let data: {grant_type: string, scope?: string} = {
             grant_type: 'client_credentials'
@@ -104,7 +104,7 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
     }
 
     public async fetchAccessTokenByRefresh(refreshToken: string): Promise<AccessToken> {
-        const httpClient = await this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
+        const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
         const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
             grant_type: 'refresh_token',
