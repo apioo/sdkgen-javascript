@@ -41,7 +41,11 @@ export class HttpClient {
             contentType = 'application/x-www-form-urlencoded';
             body = request.data;
         } else if (request.data instanceof FormData) {
-            contentType = 'multipart/form-data';
+            // the boundary needs to be set by the form data so we can not set the content type
+            contentType = undefined;
+            if (headers['Content-Type']) {
+                delete headers['Content-Type'];
+            }
             body = request.data;
         } else if (typeof request.data === 'string') {
             contentType = 'text/plain';
@@ -51,12 +55,12 @@ export class HttpClient {
             body = JSON.stringify(request.data);
         }
 
-        if (!headers['Content-Type']) {
+        if (!headers['Content-Type'] && contentType) {
             headers['Content-Type'] = contentType;
         }
 
         let url = request.url;
-        if (request.params) {
+        if (request.params && Object.entries(request.params).length > 0) {
             url += '?' + new URLSearchParams(request.params).toString();
         }
 

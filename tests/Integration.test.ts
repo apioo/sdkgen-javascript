@@ -30,7 +30,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('GET');
-        expect(response.args).toStrictEqual({startIndex: '8', count: '16', search: 'foobar'});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({count: '16', search: 'foobar', startIndex: '8'}));
         expect(response.json).toBe(null);
     });
 
@@ -47,8 +47,8 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
-        expect(response.json).toStrictEqual(payload);
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
+        expect(JSON.stringify(response.json)).toBe(JSON.stringify(payload));
     });
 
     test('client update', async () => {
@@ -64,8 +64,8 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('PUT');
-        expect(response.args).toStrictEqual({});
-        expect(response.json).toStrictEqual(payload);
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
+        expect(JSON.stringify(response.json)).toBe(JSON.stringify(payload));
     });
 
     test('client patch', async () => {
@@ -81,8 +81,8 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('PATCH');
-        expect(response.args).toStrictEqual({});
-        expect(response.json).toStrictEqual(payload);
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
+        expect(JSON.stringify(response.json)).toBe(JSON.stringify(payload));
     });
 
     test('client delete', async () => {
@@ -97,14 +97,14 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('DELETE');
-        expect(response.args).toStrictEqual({});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.json).toBe(null);
     });
 
     test('client binary', async () => {
         const client = Client.build('my_token');
 
-        const payload = Buffer.from('Zm9vYmFy', 'base64');
+        const payload = newArrayBuffer();
 
         const response = await client.product().binary(payload);
 
@@ -115,7 +115,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.data).toBe('foobar');
     });
 
@@ -133,8 +133,8 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
-        expect(response.form).toStrictEqual({foo: 'bar'});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
+        expect(JSON.stringify(response.form)).toStrictEqual(JSON.stringify({foo: 'bar'}));
     });
 
     test('client json', async () => {
@@ -149,7 +149,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.json?.string).toBe('bar');
     });
 
@@ -168,8 +168,8 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
-        expect(response.files).toStrictEqual({foo: 'foobar'});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
+        expect(JSON.stringify(response.files)).toBe(JSON.stringify({foo: 'foobar'}));
     });
 
     test('client text', async () => {
@@ -184,7 +184,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.data).toBe('foobar');
     });
 
@@ -200,7 +200,7 @@ describe('integration', () => {
         // @ts-ignore
         expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
         expect(response.method).toBe('POST');
-        expect(response.args).toStrictEqual({});
+        expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.data).toBe('<foo>bar</foo>');
     });
 });
@@ -218,25 +218,30 @@ function newPayload(): TestRequest
     };
 
     const mapScalar: TestMapScalar = {};
-    mapScalar['foo'] = 'bar';
     mapScalar['bar'] = 'foo';
+    mapScalar['foo'] = 'bar';
 
     const mapObject: TestMapObject = {};
-    mapObject['foo'] = objectFoo;
     mapObject['bar'] = objectBar;
+    mapObject['foo'] = objectFoo;
 
     return {
-        int: 1337,
-        float: 13.37,
-        string: 'foobar',
+        arrayObject: [objectFoo, objectBar],
+        arrayScalar: ['foo', 'bar'],
         bool: true,
         dateString: '2024-09-22',
         dateTimeString: '2024-09-22T10:09:00',
-        timeString: '10:09:00',
-        arrayScalar: ['foo', 'bar'],
-        arrayObject: [objectFoo, objectBar],
-        mapScalar: mapScalar,
+        float: 13.37,
+        int: 1337,
         mapObject: mapObject,
+        mapScalar: mapScalar,
         object: objectFoo,
+        string: 'foobar',
+        timeString: '10:09:00',
     };
+}
+
+function newArrayBuffer() {
+    const data = Buffer.from('Zm9vYmFy', 'base64');
+    return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
 }
