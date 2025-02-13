@@ -3,7 +3,7 @@
  * {@link https://sdkgen.app}
  */
 
-import {KnownStatusCodeException} from "../../src/Exception/KnownStatusCodeException"
+import {KnownStatusCodeException} from "../../src"
 
 
 export class TextException extends KnownStatusCodeException {

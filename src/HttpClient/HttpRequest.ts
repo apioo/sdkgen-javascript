@@ -8,15 +8,10 @@
  * file that was distributed with this source code.
  */
 
-import {Parser} from "./Parser";
-import {HttpClient} from "./HttpClient";
-
-export abstract class TagAbstract {
-    protected httpClient: HttpClient
-    protected parser: Parser
-
-    constructor(httpClient: HttpClient, parser: Parser) {
-        this.httpClient = httpClient;
-        this.parser = parser;
-    }
+export interface HttpRequest {
+    url: string
+    method: string
+    headers?: Record<string, string>
+    params?: Record<string, string>
+    data?: any
 }

@@ -19,6 +19,8 @@ export * from "./Exception/Authenticator/FoundNoAccessTokenException";
 export * from "./Exception/Authenticator/InvalidAccessTokenException";
 export * from "./Exception/Authenticator/InvalidCredentialsException";
 
+export * from "./HttpClient/HttpRequest";
+
 export * from "./TokenStore/LocalStorageTokenStore";
 export * from "./TokenStore/MemoryTokenStore";
 export * from "./TokenStore/SessionTokenStore";

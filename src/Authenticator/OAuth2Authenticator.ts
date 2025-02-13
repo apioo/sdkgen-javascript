@@ -12,7 +12,6 @@ import {OAuth2 as Credentials} from "../Credentials/OAuth2";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
 import {AccessToken} from "../AccessToken";
 import {HttpBasic} from "../Credentials/HttpBasic";
-import {InternalAxiosRequestConfig, AxiosResponse} from "axios";
 import {TokenStoreInterface} from "../TokenStoreInterface";
 import {InvalidAccessTokenException} from "../Exception/Authenticator/InvalidAccessTokenException";
 import {FoundNoAccessTokenException} from "../Exception/Authenticator/FoundNoAccessTokenException";
@@ -33,14 +32,13 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         this.scopes = credentials.scopes;
     }
 
-    async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+    async handle(headers: Record<string, string>): Promise<Record<string, string>> {
         try {
             const accessToken = await this.getAccessToken();
 
-            config.headers = config.headers || {};
-            config.headers['Authorization'] = 'Bearer ' + accessToken;
+            headers['Authorization'] = 'Bearer ' + accessToken;
 
-            return config;
+            return headers;
         } catch (error) {
             return Promise.reject(error);
         }
@@ -71,16 +69,19 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
     public async fetchAccessTokenByCode(code: string): Promise<AccessToken> {
         const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
-        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
-            grant_type: 'authorization_code',
-            code: code,
-        }, {
+        const response = await httpClient.request({
+            url: this.credentials.tokenUrl,
+            method: 'POST',
             headers: {
                 Accept: 'application/json'
             },
+            data: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+            })
         });
 
-        return this.parseTokenResponse(response);
+        return this.parseTokenResponse(response.status, await response.json() as AccessToken);
     }
 
     public async fetchAccessTokenByClientCredentials(): Promise<AccessToken> {
@@ -94,28 +95,34 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
             data.scope = this.scopes.join(',');
         }
 
-        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, data, {
+        const response = await httpClient.request({
+            url: this.credentials.tokenUrl,
+            method: 'POST',
             headers: {
                 Accept: 'application/json'
             },
+            data: new URLSearchParams(data)
         });
 
-        return this.parseTokenResponse(response);
+        return this.parseTokenResponse(response.status, await response.json() as AccessToken);
     }
 
     public async fetchAccessTokenByRefresh(refreshToken: string): Promise<AccessToken> {
         const httpClient = this.newHttpClient(new HttpBasic(this.credentials.clientId, this.credentials.clientSecret));
 
-        const response = await httpClient.post<AccessToken>(this.credentials.tokenUrl, {
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken,
-        }, {
+        const response = await httpClient.request({
+            url: this.credentials.tokenUrl,
+            method: 'POST',
             headers: {
                 Accept: 'application/json'
             },
+            data: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            })
         });
 
-        return this.parseTokenResponse(response);
+        return this.parseTokenResponse(response.status, await response.json() as AccessToken);
     }
 
 
@@ -155,18 +162,18 @@ export class OAuth2Authenticator implements AuthenticatorInterface {
         return expiresIn;
     }
 
-    private async parseTokenResponse(response: AxiosResponse<AccessToken>): Promise<AccessToken> {
-        if (response.status !== 200) {
-            throw new InvalidAccessTokenException('Could not obtain access token, received a non successful status code: ' + response.status);
+    private async parseTokenResponse(status: number, data: AccessToken): Promise<AccessToken> {
+        if (status !== 200) {
+            throw new InvalidAccessTokenException('Could not obtain access token, received a non successful status code: ' + status);
         }
 
-        if (!response.data.access_token) {
+        if (!data.access_token) {
             throw new InvalidAccessTokenException('Could not obtain access token');
         }
 
-        this.tokenStore.persist(response.data);
+        this.tokenStore.persist(data);
 
-        return response.data;
+        return data;
     }
 
     private newHttpClient(credentials: CredentialsInterface) {

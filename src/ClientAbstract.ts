@@ -13,15 +13,15 @@ import {Parser} from "./Parser";
 import {AuthenticatorFactory} from "./AuthenticatorFactory";
 import {Anonymous} from "./Credentials/Anonymous";
 import {HttpClientFactory} from "./HttpClientFactory";
-import {AxiosInstance} from "axios";
 import {AuthenticatorInterface} from "./AuthenticatorInterface";
+import {HttpClient} from "./HttpClient";
 
 export abstract class ClientAbstract {
 
     public static readonly USER_AGENT = 'SDKgen Client v2.0';
 
     protected authenticator: AuthenticatorInterface
-    protected httpClient: AxiosInstance
+    protected httpClient: HttpClient
     protected parser: Parser
 
     constructor(baseUrl: string, credentials: CredentialsInterface|null = null) {

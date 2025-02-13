@@ -8,10 +8,8 @@
  * file that was distributed with this source code.
  */
 
-import {InternalAxiosRequestConfig} from "axios";
-
 export interface AuthenticatorInterface {
 
-    handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig>;
+    handle(headers: Record<string, string>): Promise<Record<string, string>>;
 
 }

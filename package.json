@@ -1,6 +1,6 @@
 {
   "name": "sdkgen-client",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "SDKgen client",
   "keywords": [
     "sdkgen",
@@ -31,9 +31,6 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap",
     "test": "jest"
-  },
-  "dependencies": {
-    "axios": "1.7.9"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.3",

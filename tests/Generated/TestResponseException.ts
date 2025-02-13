@@ -3,7 +3,7 @@
  * {@link https://sdkgen.app}
  */
 
-import {KnownStatusCodeException} from "../../src/Exception/KnownStatusCodeException"
+import {KnownStatusCodeException} from "../../src"
 
 import {TestResponse} from "./TestResponse";
 

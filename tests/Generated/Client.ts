@@ -3,10 +3,10 @@
  * {@link https://sdkgen.app}
  */
 
-import axios, {AxiosRequestConfig} from "axios";
-import {ClientAbstract} from "../../src/ClientAbstract"
-import {HttpBearer} from "../../src/Credentials/HttpBearer"
-import {Anonymous} from "../../src/Credentials/Anonymous"
+import {ClientAbstract, CredentialsInterface, TokenStoreInterface, HttpRequest} from "../../src"
+import {HttpBearer} from "../../src"
+import {Anonymous} from "../../src"
+import {ClientException, UnknownStatusCodeException} from "../../src";
 
 import {ProductTag} from "./ProductTag";
 

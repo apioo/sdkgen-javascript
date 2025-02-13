@@ -10,7 +10,6 @@
 
 import {HttpBasic as Credentials} from "../Credentials/HttpBasic";
 import {AuthenticatorInterface} from "../AuthenticatorInterface";
-import {InternalAxiosRequestConfig} from "axios";
 
 export class HttpBasicAuthenticator implements AuthenticatorInterface {
     private credentials: Credentials;
@@ -19,12 +18,9 @@ export class HttpBasicAuthenticator implements AuthenticatorInterface {
         this.credentials = credentials;
     }
 
-    async handle(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
-        config.auth = {
-            username: this.credentials.userName,
-            password: this.credentials.password
-        };
+    async handle(headers: Record<string, string>): Promise<Record<string, string>> {
+        headers['Authorization'] = 'Basic ' + btoa(this.credentials.userName + ':' + this.credentials.password);
 
-        return config;
+        return headers;
     }
 }

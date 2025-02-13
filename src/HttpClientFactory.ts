@@ -9,8 +9,7 @@
  */
 
 import {AuthenticatorInterface} from "./AuthenticatorInterface";
-import axios, {AxiosInstance} from "axios";
-import {ClientAbstract} from "./ClientAbstract";
+import {HttpClient} from "./HttpClient";
 
 export class HttpClientFactory {
     private authenticator: AuthenticatorInterface;
@@ -19,19 +18,11 @@ export class HttpClientFactory {
         this.authenticator = authenticator;
     }
 
-    public factory(): AxiosInstance {
-        let headers : Record<string, string> = {
-            'User-Agent': ClientAbstract.USER_AGENT,
-            'Accept': 'application/json',
-        };
+    public factory(): HttpClient {
+        const client = new HttpClient();
 
-        const client = axios.create({
-            headers: headers,
-            responseType: 'json',
-        });
-
-        client.interceptors.request.use(async (config) => {
-            return await this.authenticator.handle(config);
+        client.addHeaderInterceptor(async (request: Record<string, string>): Promise<Record<string, string>> => {
+            return this.authenticator.handle(request);
         });
 
         return client;
