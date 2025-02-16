@@ -14,9 +14,7 @@ import {TestRequest} from "./Generated/TestRequest";
 import {TestObject} from "./Generated/TestObject";
 import {TestMapScalar} from "./Generated/TestMapScalar";
 import {TestMapObject} from "./Generated/TestMapObject";
-
-import fs from 'node:fs';
-import {ApiKey, HttpBasic, HttpBearer, MemoryTokenStore, OAuth2} from "../src";
+import {ApiKey, HttpBasic, HttpBearer} from "../src";
 
 describe('integration', () => {
     test('client get all', async () => {
