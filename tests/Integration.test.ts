@@ -16,6 +16,7 @@ import {TestMapScalar} from "./Generated/TestMapScalar";
 import {TestMapObject} from "./Generated/TestMapObject";
 
 import fs from 'node:fs';
+import {ApiKey, HttpBasic, HttpBearer, MemoryTokenStore, OAuth2} from "../src";
 
 describe('integration', () => {
     test('client get all', async () => {
@@ -203,6 +204,49 @@ describe('integration', () => {
         expect(JSON.stringify(response.args)).toBe(JSON.stringify({}));
         expect(response.data).toBe('<foo>bar</foo>');
     });
+
+    test('client basic auth', async () => {
+        const client = new Client('http://127.0.0.1:8081', new HttpBasic('test', 'test123'));
+
+        const response = await client.product().getAll(8, 16, 'foobar');
+
+        // @ts-ignore
+        expect(response.headers['Authorization']).toBe('Basic dGVzdDp0ZXN0MTIz');
+        // @ts-ignore
+        expect(response.headers['Accept']).toBe('application/json');
+        // @ts-ignore
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
+        expect(response.method).toBe('GET');
+    });
+
+    test('client api key', async () => {
+        const client = new Client('http://127.0.0.1:8081', new ApiKey('token', 'X-Api-Key', 'header'));
+
+        const response = await client.product().getAll(8, 16, 'foobar');
+
+        // @ts-ignore
+        expect(response.headers['X-Api-Key']).toBe('token');
+        // @ts-ignore
+        expect(response.headers['Accept']).toBe('application/json');
+        // @ts-ignore
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
+        expect(response.method).toBe('GET');
+    });
+
+    test('client basic bearer', async () => {
+        const client = new Client('http://127.0.0.1:8081', new HttpBearer('token'));
+
+        const response = await client.product().getAll(8, 16, 'foobar');
+
+        // @ts-ignore
+        expect(response.headers['Authorization']).toBe('Bearer token');
+        // @ts-ignore
+        expect(response.headers['Accept']).toBe('application/json');
+        // @ts-ignore
+        expect(response.headers['User-Agent']).toBe('SDKgen Client v2.0');
+        expect(response.method).toBe('GET');
+    });
+
 });
 
 function newPayload(): TestRequest
