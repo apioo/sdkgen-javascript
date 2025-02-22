@@ -24,9 +24,15 @@ export class HttpClient {
     }
 
     public async request(request: HttpRequest): Promise<Response> {
-        let headers = request.headers || {};
+        let headers: Record<string, string> = {};
         headers['User-Agent'] = ClientAbstract.USER_AGENT;
         headers['Accept'] = 'application/json';
+
+        if (request.headers) {
+            for (const [name, value] of Object.entries(request.headers)) {
+                headers[name] = value;
+            }
+        }
 
         for (const headerInterceptor of this.headerInterceptors) {
             headers = await headerInterceptor(headers);
