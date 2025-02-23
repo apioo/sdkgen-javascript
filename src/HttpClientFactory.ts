@@ -10,19 +10,28 @@
 
 import {AuthenticatorInterface} from "./AuthenticatorInterface";
 import {HttpClient} from "./HttpClient";
+import {ClientAbstract} from "./ClientAbstract";
 
 export class HttpClientFactory {
-    private authenticator: AuthenticatorInterface;
-
-    constructor(authenticator: AuthenticatorInterface) {
-        this.authenticator = authenticator;
+    constructor(private authenticator: AuthenticatorInterface, private version: string|null = null) {
     }
 
     public factory(): HttpClient {
         const client = new HttpClient();
 
-        client.addHeaderInterceptor(async (request: Record<string, string>): Promise<Record<string, string>> => {
-            return this.authenticator.handle(request);
+        client.addHeaderInterceptor(async (headers: Record<string, string>): Promise<Record<string, string>> => {
+            if (this.version) {
+                headers['User-Agent'] = ClientAbstract.USER_AGENT + '/' + this.version;
+            } else {
+                headers['User-Agent'] = ClientAbstract.USER_AGENT;
+            }
+            headers['Accept'] = 'application/json';
+
+            return headers;
+        });
+
+        client.addHeaderInterceptor(async (headers: Record<string, string>): Promise<Record<string, string>> => {
+            return this.authenticator.handle(headers);
         });
 
         return client;

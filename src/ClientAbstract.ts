@@ -18,15 +18,15 @@ import {HttpClient} from "./HttpClient";
 
 export abstract class ClientAbstract {
 
-    public static readonly USER_AGENT = 'SDKgen Client v2.0';
+    public static readonly USER_AGENT = 'SDKgen';
 
     protected authenticator: AuthenticatorInterface
     protected httpClient: HttpClient
     protected parser: Parser
 
-    constructor(baseUrl: string, credentials: CredentialsInterface|null = null) {
+    constructor(baseUrl: string, credentials: CredentialsInterface|null = null, version: string|null = null) {
         this.authenticator = AuthenticatorFactory.factory(credentials || new Anonymous());
-        this.httpClient = (new HttpClientFactory(this.authenticator)).factory();
+        this.httpClient = (new HttpClientFactory(this.authenticator, version)).factory();
         this.parser = new Parser(baseUrl);
     }
 

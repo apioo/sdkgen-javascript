@@ -8,7 +8,6 @@
  * file that was distributed with this source code.
  */
 
-import {ClientAbstract} from "./ClientAbstract";
 import {HttpRequest} from "./HttpClient/HttpRequest";
 import {ClientException} from "./Exception/ClientException";
 
@@ -25,17 +24,15 @@ export class HttpClient {
 
     public async request(request: HttpRequest): Promise<Response> {
         let headers: Record<string, string> = {};
-        headers['User-Agent'] = ClientAbstract.USER_AGENT;
-        headers['Accept'] = 'application/json';
+
+        for (const headerInterceptor of this.headerInterceptors) {
+            headers = await headerInterceptor(headers);
+        }
 
         if (request.headers) {
             for (const [name, value] of Object.entries(request.headers)) {
                 headers[name] = value;
             }
-        }
-
-        for (const headerInterceptor of this.headerInterceptors) {
-            headers = await headerInterceptor(headers);
         }
 
         let contentType;

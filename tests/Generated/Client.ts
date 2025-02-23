@@ -23,7 +23,7 @@ export class Client extends ClientAbstract {
 
     public static build(token: string): Client
     {
-        return new Client('http://127.0.0.1:8081', new HttpBearer(token));
+        return new Client('http://127.0.0.1:8081', new HttpBearer(token), '0.1.0');
     }
 
     public static buildAnonymous(): Client
