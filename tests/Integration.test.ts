@@ -204,7 +204,7 @@ describe('integration', () => {
     });
 
     test('client basic auth', async () => {
-        const client = new Client('http://127.0.0.1:8081', new HttpBasic('test', 'test123'));
+        const client = new Client('http://127.0.0.1:8081', new HttpBasic('test', 'test123'), '0.1.0');
 
         const response = await client.product().getAll(8, 16, 'foobar');
 
@@ -218,7 +218,7 @@ describe('integration', () => {
     });
 
     test('client api key', async () => {
-        const client = new Client('http://127.0.0.1:8081', new ApiKey('token', 'X-Api-Key', 'header'));
+        const client = new Client('http://127.0.0.1:8081', new ApiKey('token', 'X-Api-Key', 'header'), '0.1.0');
 
         const response = await client.product().getAll(8, 16, 'foobar');
 
@@ -232,7 +232,7 @@ describe('integration', () => {
     });
 
     test('client basic bearer', async () => {
-        const client = new Client('http://127.0.0.1:8081', new HttpBearer('token'));
+        const client = new Client('http://127.0.0.1:8081', new HttpBearer('token'), '0.1.0');
 
         const response = await client.product().getAll(8, 16, 'foobar');
 
